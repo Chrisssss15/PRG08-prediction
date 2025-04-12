@@ -30,10 +30,10 @@ const quizQuestions = [
 ];
 
 const handToAnswerMap = {
-    "flex": "a",
-    "duimpiee": "b",
-    "love": "c",
-    "boks": "d"
+    "flex": "A",
+    "duimpiee": "B",
+    "love": "C",
+    "boks": "D"
 };
 
 const enableWebcamButton = document.getElementById("webcamButton")
@@ -161,7 +161,7 @@ async function predictWebcam() {
                     classifyHand();
                     hasAnswered = true;
                 }
-            }, 2000); // Elke 2 sec checkt die of je een handgebaar maakt
+            }, 5000); // Elke 2 sec checkt die of je een handgebaar maakt
         }
         window.requestAnimationFrame(predictWebcam);
     }
@@ -192,8 +192,8 @@ function classifyHand() {
         if (correct) score++;
         
         statusDiv.textContent = correct
-            ? `✅ Goed! ${label} is het juiste antwoord.`
-            : `❌ Fout. Jij deed ${label}, maar het juiste antwoord was ${q.correct}`;
+            ? `✅ Goed! ${answer} is het juiste antwoord.`
+            : `❌ Fout. Jij deed ${answer}, maar het juiste antwoord was ${q.correct}`;
         
         document.getElementById("score").textContent = `Score: ${score}`;
         currentQuestionIndex++;
@@ -211,7 +211,7 @@ function classifyHand() {
         }
         setTimeout(() => {
             hasAnswered = false; // laat toe dat er weer opnieuw geantwoord wordt
-        }, 2000); 
+        }, 5000); 
     });
 }
 
