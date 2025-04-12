@@ -1,7 +1,40 @@
 import { HandLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18";
-import testdata from './testdata.json' with {type: 'json'};
+// import testdata from './testdata.json' with {type: 'json'};
 
+const quizQuestions = [
+    {
+        question: "Wat is 5 + 3?",
+        options: ["6", "7", "8", "9"],
+        correct: "c" // 8
+    },
+    {
+        question: "Wat is 10 - 4?",
+        options: ["6", "5", "4", "7"],
+        correct: "a" // 6
+    },
+    {
+        question: "Wat is 3 x 3?",
+        options: ["6", "8", "9", "12"],
+        correct: "c" // 9
+    },
+    {
+        question: "Wat is 12 / 3?",
+        options: ["3", "4", "6", "2"],
+        correct: "b" // 4
+    },
+    {
+        question: "Wat is 7 + 2?",
+        options: ["8", "9", "10", "11"],
+        correct: "b" // 9
+    },
+];
 
+const handToAnswerMap = {
+    "flex": "a",
+    "duimpiee": "b",
+    "love": "c",
+    "boks": "d"
+};
 
 const enableWebcamButton = document.getElementById("webcamButton")
 const logButton = document.getElementById("logButton")
@@ -21,6 +54,32 @@ let results = undefined;
 let image = document.querySelector("#myimage")
 let nn;
 
+let currentQuestionIndex = 0;
+let score = 0;
+// const answer = handToAnswerMap[label];
+
+let autoAnswerInterval;
+let hasAnswered = false;
+
+
+
+function showQuestion() {
+    const q = quizQuestions[currentQuestionIndex];
+    resultDiv.innerHTML = `
+        <h2>${q.question}</h2>
+        <ul>
+            <li>a) 🤙🏼 ${q.options[0]}</li>
+            <li>b) 👍 ${q.options[1]}</li>
+            <li>c) 🫰🏼 ${q.options[2]}</li>
+            <li>d) 👊🏼 ${q.options[3]}</li>
+        </ul>
+        <p>Maak een handgebaar om te antwoorden...</p>
+    `;
+}
+
+// Start de eerste vraag
+showQuestion();
+
 
 function createNeuralNetwork() {
     ml5.setBackend('webgl');
@@ -36,10 +95,6 @@ function createNeuralNetwork() {
     nn.load(option, createHandLandmarker);
 }
 
-
-/********************************************************************
-// CREATE THE POSE DETECTOR
-********************************************************************/
 const createHandLandmarker = async () => {
     console.log("Loading model is loaded!");
 
@@ -50,13 +105,12 @@ const createHandLandmarker = async () => {
             delegate: "GPU"
         },
         runningMode: "VIDEO",
-        numHands: 2
+        numHands: 1
     });
     console.log("model loaded, you can start webcam")
     
-    enableWebcamButton.addEventListener("click", (e) => enableCam(e))
-    // logButton.addEventListener("click", (e) => classifyHand(e)) 
-    logButton.addEventListener("click", (e) => calculateLetter(e)) 
+    enableCam();
+    logButton.addEventListener("click", (e) => classifyHand(e)) 
 
 }
 
@@ -100,61 +154,68 @@ async function predictWebcam() {
     }
 
     if (webcamRunning) {
-       window.requestAnimationFrame(predictWebcam)
-    }
-}
-
-// function classifyHand() {
-//     // console.log(results.landmarks[0]); // array van objecten met x,y,z
-//     let numbersOnly = []
-//     let hand = results.landmarks[0]
-//     for(let point of hand){
-//         numbersOnly.push(point.x, point.y, point.z)
-//     }
-
-//     // console.log(numbersOnly);
-//     nn.classify(numbersOnly, (results) => {
-//         // console.log(results);
-//         console.log(`I am ${results[0].confidence.toFixed(2) * 100}% sure that this is a ${results[0].label}`);
-//         statusDiv.textContent = `I think this pose is a ${results[0].label}. I am ${results[0].confidence.toFixed(2) * 100}% sure.`;
-//     })
-
-//     // statusDiv.textContent = `I think this pose is a ${results[0].label}. I am ${results[0].confidence.toFixed(2) * 100}% sure.`;
-// }
-
-
-async function calculateLetter() {
-    let c = 0;
-    let total = testdata.length;
-
-    for (let pose of testdata) {
-        const poseArray = pose.data;
-        const result = await classifyAsync(poseArray);
-        console.log(result.label, pose.label);
-        if (result.label == pose.label) {
-            c += 1 ;
+        if (!autoAnswerInterval && results.landmarks[0]) {
+            autoAnswerInterval = setInterval(() => {
+                console.log("autoAnswerInterval")
+                if (!hasAnswered && results.landmarks[0]) {
+                    classifyHand();
+                    hasAnswered = true;
+                }
+            }, 2000); // Elke 2 sec checkt die of je een handgebaar maakt
         }
+        window.requestAnimationFrame(predictWebcam);
     }
-    showInBrowser(total, c);
+
+    
 
 }
 
-function showInBrowser(total, c) {
-    const resultDiv = document.getElementById("result");
-    resultDiv.textContent = `${c}/ ${total} are correct!, Accruacy is ${Math.round((c / total) * 100)}%`;
-}
 
-function classifyAsync(input) {
-    return new Promise((resolve, reject) => {
-        nn.classify(input, (result) => {
-            if (result && result[0]) {
-                resolve(result[0]);
-            } else {
-                reject(new Error("No result found"));
-            }
-        });
+function classifyHand() {
+    let numbersOnly = [];
+    let hand = results.landmarks[0];
+    for (let point of hand) {
+        numbersOnly.push(point.x, point.y, point.z);
+    }
+
+    nn.classify(numbersOnly, (results) => {
+        const label = results[0].label;
+        const answer = handToAnswerMap[label];
+        const q = quizQuestions[currentQuestionIndex];
+
+        if (!answer) {
+            statusDiv.textContent = `Onbekend gebaar: ${label}`;
+            return;
+        }
+
+        const correct = q.correct === answer;
+        if (correct) score++;
+        
+        statusDiv.textContent = correct
+            ? `✅ Goed! ${label} is het juiste antwoord.`
+            : `❌ Fout. Jij deed ${label}, maar het juiste antwoord was ${q.correct}`;
+        
+        document.getElementById("score").textContent = `Score: ${score}`;
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizQuestions.length) {
+            setTimeout(() => {
+                showQuestion();
+                statusDiv.textContent = "";
+            }, 2000); // wacht 2 sec
+        } else {
+            resultDiv.innerHTML = `
+            <h2>🎉 Quiz afgerond!</h2>
+            <p>Je score: ${score} van de ${quizQuestions.length}</p>
+        `;            clearInterval(autoAnswerInterval);
+        }
+        setTimeout(() => {
+            hasAnswered = false; // laat toe dat er weer opnieuw geantwoord wordt
+        }, 2000); 
     });
 }
+
+
 
 
 
