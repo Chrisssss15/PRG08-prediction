@@ -5,27 +5,27 @@ const quizQuestions = [
     {
         question: "Wat is 5 + 3?",
         options: ["6", "7", "8", "9"],
-        correct: "c" // 8
+        correct: "C" // 8
     },
     {
         question: "Wat is 10 - 4?",
         options: ["6", "5", "4", "7"],
-        correct: "a" // 6
+        correct: "A" // 6
     },
     {
         question: "Wat is 3 x 3?",
         options: ["6", "8", "9", "12"],
-        correct: "c" // 9
+        correct: "C" // 9
     },
     {
         question: "Wat is 12 / 3?",
         options: ["3", "4", "6", "2"],
-        correct: "b" // 4
+        correct: "B" // 4
     },
     {
         question: "Wat is 7 + 2?",
         options: ["8", "9", "10", "11"],
-        correct: "b" // 9
+        correct: "B" // 9
     },
 ];
 
@@ -67,10 +67,10 @@ function showQuestion() {
     resultDiv.innerHTML = `
         <h2>${q.question}</h2>
         <ul>
-            <li>a) 🤙🏼 ${q.options[0]}</li>
-            <li>b) 👍🏼 ${q.options[1]}</li>
-            <li>c) 🫰🏼 ${q.options[2]}</li>
-            <li>d) 👊🏼 ${q.options[3]}</li>
+            <li>A) 🤙🏼 ${q.options[0]}</li>
+            <li>B) 👍🏼 ${q.options[1]}</li>
+            <li>C) 🫰🏼 ${q.options[2]}</li>
+            <li>D) 👊🏼 ${q.options[3]}</li>
         </ul>
         <p>Maak een handgebaar om te antwoorden...</p>
     `;
@@ -210,7 +210,7 @@ function classifyHand() {
         }
         setTimeout(() => {
             hasAnswered = false; // laat toe dat er weer opnieuw geantwoord wordt
-        }, 5000); 
+        }, 2000); 
     });
 }
 
