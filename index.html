@@ -12,47 +12,49 @@
 
 <body>
 
-  <section>
-    <h1>🖐️ Handpose Quiz</h1>
-
+  <section class="main-layout">
     <div class="instructions">
       <h2>📖 Uitleg</h2>
       <p>
         In deze quiz geef je jouw antwoord niet met de muis, maar met je hand! ✋<br />
         De camera herkent jouw handpose, en bepaalt daarmee welk antwoord je kiest.
       </p>
-    
+  
       <ul>
-        <li>🤙🏼 <strong>= antwoord A</strong></li>
-        <li>👍🏼 <strong>= antwoord B</strong></li>
-        <li>🫰🏼 <strong>= antwoord C</strong></li>
-        <li>👊🏼 <strong>= antwoord D</strong></li>
+        <li>💪 = antwoord A</li>
+        <li>👍 = antwoord B</li>
+        <li>🤟 = antwoord C</li>
+        <li>✊ = antwoord D</li>
       </ul>
-    
+  
       <p>
         Het systeem start automatisch zodra de camera aan staat.<br />
         <strong>Houd alleen je hand in beeld als je een antwoord wilt geven.</strong><br />
         Als je handen beweegt of meerdere poses laat zien, kan het zijn dat er onbedoeld een verkeerd antwoord wordt geregistreerd.
       </p>
     </div>
-
-    <div class="button-row">
-      <!-- <button id="webcamButton">Start Webcam</button> -->
-      <button id="logButton">Log Data</button>
-    </div>
-
-    <div id="score">Score: 0</div>
-    <h3 id="status"></h3>
-    <h3 id="result"></h3>
-
-    <div class="videoView">
-      <div class="video-wrapper">
-        <video id="webcam" muted autoplay playsinline></video>
-        <canvas id="output_canvas"></canvas>
-        <div id="myimage"></div>
+  
+    <div class="quiz-container">
+      <h1>🖐️ Handpose Quiz</h1>
+  
+      <div class="button-row">
+        <button id="logButton">Log Data</button>
+      </div>
+  
+      <div id="score">Score: 0</div>
+      <h3 id="status"></h3>
+      <h3 id="result"></h3>
+  
+      <div class="videoView">
+        <div class="video-wrapper">
+          <video id="webcam" muted autoplay playsinline></video>
+          <canvas id="output_canvas"></canvas>
+          <div id="myimage"></div>
+        </div>
       </div>
     </div>
   </section>
+  
 
 </body>
 
