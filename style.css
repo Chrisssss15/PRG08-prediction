@@ -53,7 +53,8 @@ button:hover {
   color: #444;
 }
 
-#status, #result {
+#status,
+#result {
   font-size: 1.1rem;
   margin: 1rem 0;
 }
@@ -64,11 +65,48 @@ button:hover {
   justify-content: center;
 }
 
-video, canvas {
+.video-wrapper {
+  position: relative;
   width: 100%;
   max-width: 500px;
+}
+
+video,
+canvas {
+  width: 100%;
   height: auto;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  transform: scaleX(-1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transform: scaleX(-1); /* spiegelbeeld fix */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.instructions {
+  background-color: #f8faff;
+  border: 2px solid #d6e4ff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.instructions h2 {
+  color: #2d5be3;
+  margin-top: 0;
+}
+
+.instructions ul {
+  padding-left: 1.2rem;
+  margin: 1rem 0;
+}
+
+.instructions li {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.instructions strong {
+  color: #e53935;
 }
