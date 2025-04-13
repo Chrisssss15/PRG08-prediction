@@ -29,47 +29,46 @@ const quizQuestions = [
     },
 ];
 
-const handToAnswerMap = {
+
+// Elementen
+const enableWebcamButton = document.getElementById("webcamButton")
+const logButton = document.getElementById("logButton")
+const video = document.getElementById("webcam")
+const canvasElement = document.getElementById("output_canvas")
+const canvasCtx = canvasElement.getContext("2d")
+const statusDiv = document.getElementById("status")
+const resultDiv = document.getElementById("result")
+const drawUtils = new DrawingUtils(canvasCtx)
+
+
+// AI
+let nn;
+let handLandmarker = undefined;
+let webcamRunning = false;
+let results = undefined;
+let image = document.querySelector("#myimage")
+
+// Quiz
+let currentQuestionIndex = 0;
+let score = 0;
+let autoAnswerInterval;
+let hasAnswered = false;
+const poseToAnswer = {
     "flex": "A",
     "duimpiee": "B",
     "love": "C",
     "boks": "D"
 };
 
-const enableWebcamButton = document.getElementById("webcamButton")
-const logButton = document.getElementById("logButton")
 
-const video = document.getElementById("webcam")
-const canvasElement = document.getElementById("output_canvas")
-const canvasCtx = canvasElement.getContext("2d")
-const statusDiv = document.getElementById("status")
-const resultDiv = document.getElementById("result")
-
-
-const drawUtils = new DrawingUtils(canvasCtx)
-let handLandmarker = undefined;
-let webcamRunning = false;
-let results = undefined;
-
-let image = document.querySelector("#myimage")
-let nn;
-
-let currentQuestionIndex = 0;
-let score = 0;
-// const answer = handToAnswerMap[label];
-
-let autoAnswerInterval;
-let hasAnswered = false;
-
-
-
+//
 function showQuestion() {
     const q = quizQuestions[currentQuestionIndex];
     resultDiv.innerHTML = `
         <h2>${q.question}</h2>
         <ul>
             <li>a) 🤙🏼 ${q.options[0]}</li>
-            <li>b) 👍 ${q.options[1]}</li>
+            <li>b) 👍🏼 ${q.options[1]}</li>
             <li>c) 🫰🏼 ${q.options[2]}</li>
             <li>d) 👊🏼 ${q.options[3]}</li>
         </ul>
@@ -80,7 +79,7 @@ function showQuestion() {
 // Start de eerste vraag
 showQuestion();
 
-
+// Start de webcam
 function createNeuralNetwork() {
     ml5.setBackend('webgl');
     nn = ml5.neuralNetwork({task: 'classification', debug: true});
@@ -171,7 +170,7 @@ async function predictWebcam() {
 }
 
 
-function classifyHand() {
+function classifyHand() { 
     let numbersOnly = [];
     let hand = results.landmarks[0];
     for (let point of hand) {
@@ -180,7 +179,7 @@ function classifyHand() {
 
     nn.classify(numbersOnly, (results) => {
         const label = results[0].label;
-        const answer = handToAnswerMap[label];
+        const answer = poseToAnswer[label];
         const q = quizQuestions[currentQuestionIndex];
 
         if (!answer) {
@@ -202,7 +201,7 @@ function classifyHand() {
             setTimeout(() => {
                 showQuestion();
                 statusDiv.textContent = "";
-            }, 2000); // wacht 2 sec
+            }, 5000);
         } else {
             resultDiv.innerHTML = `
             <h2>🎉 Quiz afgerond!</h2>
