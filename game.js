@@ -191,8 +191,8 @@ function classifyHand() {
         if (correct) score++;
         
         statusDiv.textContent = correct
-            ? `✅ Goed! ${answer} is het juiste antwoord.`
-            : `❌ Fout. Jij deed ${answer}, maar het juiste antwoord was ${q.correct}`;
+            ? `Goed! ${answer} is het juiste antwoord.`
+            : `Fout. Jij deed ${answer}, maar het juiste antwoord was ${q.correct}`;
         
         document.getElementById("score").textContent = `Score: ${score}`;
         currentQuestionIndex++;
@@ -204,7 +204,7 @@ function classifyHand() {
             }, 5000);
         } else {
             resultDiv.innerHTML = `
-            <h2>🎉 Quiz afgerond!</h2>
+            <h2>Quiz afgerond!</h2>
             <p>Je score: ${score} van de ${quizQuestions.length}</p>
         `;            clearInterval(autoAnswerInterval);
         }
